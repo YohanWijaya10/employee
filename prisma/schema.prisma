@@ -1,0 +1,229 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+// ============================================
+// CORE ENTITIES
+// ============================================
+
+model SalesRep {
+  id        String   @id @default(cuid())
+  code      String   @unique // e.g., "SR001"
+  name      String
+  email     String?
+  phone     String?
+  region    String?
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  orders              Order[]
+  cancelledOrders     CancellationLog[] @relation("CancelledBy")
+
+  @@index([code])
+  @@index([region])
+  @@index([isActive])
+}
+
+model Outlet {
+  id          String   @id @default(cuid())
+  code        String   @unique // e.g., "OUT001"
+  name        String
+  address     String?
+  city        String?
+  region      String?
+  outletType  OutletType @default(RETAIL)
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  orders Order[]
+
+  @@index([code])
+  @@index([region])
+  @@index([outletType])
+  @@index([isActive])
+}
+
+enum OutletType {
+  RETAIL
+  WHOLESALE
+  DISTRIBUTOR
+  SUPERMARKET
+  MINIMARKET
+}
+
+model Product {
+  id          String   @id @default(cuid())
+  sku         String   @unique // e.g., "SKU001"
+  name        String
+  category    String?
+  unitPrice   Float    // Base price per unit
+  unit        String   @default("pcs") // pcs, kg, liter, etc.
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  orderItems OrderItem[]
+
+  @@index([sku])
+  @@index([category])
+  @@index([isActive])
+}
+
+// ============================================
+// ORDER MANAGEMENT
+// ============================================
+
+model Order {
+  id              String      @id @default(cuid())
+  orderNumber     String      @unique // e.g., "ORD-20240115-001"
+  status          OrderStatus @default(CREATED)
+
+  // Order details
+  totalAmount     Float
+  totalItems      Int
+  notes           String?
+
+  // Dates
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+  plannedShipDate DateTime?   // When the order is planned to ship
+  deliveredAt     DateTime?   // Actual delivery timestamp
+
+  // Relations
+  salesRepId      String
+  salesRep        SalesRep    @relation(fields: [salesRepId], references: [id])
+
+  outletId        String
+  outlet          Outlet      @relation(fields: [outletId], references: [id])
+
+  orderItems      OrderItem[]
+  cancellation    CancellationLog?
+  auditFlags      AuditFlag[]
+
+  @@index([status])
+  @@index([createdAt])
+  @@index([salesRepId])
+  @@index([outletId])
+  @@index([salesRepId, createdAt])
+  @@index([outletId, createdAt])
+  @@index([plannedShipDate])
+  @@index([status, createdAt])
+}
+
+enum OrderStatus {
+  CREATED
+  READY_TO_SHIP
+  DELIVERED
+  CANCELLED
+}
+
+model OrderItem {
+  id        String   @id @default(cuid())
+  quantity  Int
+  unitPrice Float    // Price at time of order
+  subtotal  Float    // quantity * unitPrice
+
+  // Relations
+  orderId   String
+  order     Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  productId String
+  product   Product  @relation(fields: [productId], references: [id])
+
+  @@index([orderId])
+  @@index([productId])
+}
+
+// ============================================
+// CANCELLATION TRACKING
+// ============================================
+
+model CancellationLog {
+  id                  String              @id @default(cuid())
+  reason              CancellationReason
+  notes               String?
+  cancelledAt         DateTime            @default(now())
+
+  // Who cancelled
+  cancelledBySalesRepId String?
+  cancelledBySalesRep   SalesRep?         @relation("CancelledBy", fields: [cancelledBySalesRepId], references: [id])
+
+  // Which order
+  orderId             String              @unique
+  order               Order               @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  // Metadata for analysis
+  hoursBeforeShipDate Float?              // How many hours before plannedShipDate was it cancelled?
+
+  @@index([cancelledAt])
+  @@index([reason])
+  @@index([cancelledBySalesRepId])
+  @@index([hoursBeforeShipDate])
+}
+
+enum CancellationReason {
+  CUSTOMER_REQUEST
+  OUT_OF_STOCK
+  PAYMENT_ISSUE
+  DELIVERY_ISSUE
+  DUPLICATE_ORDER
+  PRICING_ERROR
+  SALES_REP_ERROR
+  OTHER
+}
+
+// ============================================
+// AUDIT & FRAUD FLAGS
+// ============================================
+
+model AuditFlag {
+  id          String        @id @default(cuid())
+  entityType  EntityType
+  entityId    String
+  ruleCode    String        // e.g., "HIGH_CANCEL_RATE", "END_OF_MONTH_SPIKE"
+  severity    FlagSeverity
+  message     String
+  meta        Json?         // Additional context data
+  isResolved  Boolean       @default(false)
+  resolvedAt  DateTime?
+  resolvedBy  String?
+  createdAt   DateTime      @default(now())
+
+  // Optional direct relation to order
+  orderId     String?
+  order       Order?        @relation(fields: [orderId], references: [id], onDelete: SetNull)
+
+  @@index([entityType, entityId])
+  @@index([ruleCode])
+  @@index([severity])
+  @@index([createdAt])
+  @@index([isResolved])
+  @@index([entityType, createdAt])
+}
+
+enum EntityType {
+  SALES_REP
+  OUTLET
+  ORDER
+  PRODUCT
+}
+
+enum FlagSeverity {
+  INFO
+  WARN
+  HIGH
+}
