@@ -57,25 +57,47 @@ function isEndOfMonth(date: Date): boolean {
 // ============================================
 
 const salesRepData = [
-  { code: 'SR001', name: 'John Smith', email: 'john.smith@company.com', region: 'North', phone: '+1-555-0101' },
-  { code: 'SR002', name: 'Sarah Johnson', email: 'sarah.johnson@company.com', region: 'South', phone: '+1-555-0102' }, // HIGH CANCEL
-  { code: 'SR003', name: 'Michael Brown', email: 'michael.brown@company.com', region: 'East', phone: '+1-555-0103' },
-  { code: 'SR004', name: 'Emily Davis', email: 'emily.davis@company.com', region: 'West', phone: '+1-555-0104' },
-  { code: 'SR005', name: 'David Wilson', email: 'david.wilson@company.com', region: 'Central', phone: '+1-555-0105' }, // HIGH CANCEL
-  { code: 'SR006', name: 'Lisa Anderson', email: 'lisa.anderson@company.com', region: 'North', phone: '+1-555-0106' },
+  { code: 'SR001', name: 'Budi Santoso', email: 'budi.santoso@salesmonitor.id', region: 'Jabodetabek', phone: '+62-812-1001-0001' },
+  { code: 'SR002', name: 'Siti Nurhaliza', email: 'siti.nurhaliza@salesmonitor.id', region: 'Jawa Barat', phone: '+62-812-1001-0002' }, // HIGH CANCEL
+  { code: 'SR003', name: 'Andi Pratama', email: 'andi.pratama@salesmonitor.id', region: 'Jawa Tengah', phone: '+62-812-1001-0003' },
+  { code: 'SR004', name: 'Rina Kartika', email: 'rina.kartika@salesmonitor.id', region: 'Jawa Timur', phone: '+62-812-1001-0004' },
+  { code: 'SR005', name: 'Agus Wijaya', email: 'agus.wijaya@salesmonitor.id', region: 'Sumatera Utara', phone: '+62-812-1001-0005' }, // HIGH CANCEL
+  { code: 'SR006', name: 'Dewi Lestari', email: 'dewi.lestari@salesmonitor.id', region: 'Sulawesi Selatan', phone: '+62-812-1001-0006' },
 ];
 
 const outletTypes: OutletType[] = ['RETAIL', 'WHOLESALE', 'DISTRIBUTOR', 'SUPERMARKET', 'MINIMARKET'];
-const cities = ['New York', 'Los Angeles', 'Chicago', 'Houston', 'Phoenix', 'Philadelphia', 'San Antonio', 'San Diego'];
-const regions = ['North', 'South', 'East', 'West', 'Central'];
+const cities = [
+  'Jakarta',
+  'Surabaya',
+  'Bandung',
+  'Medan',
+  'Makassar',
+  'Semarang',
+  'Yogyakarta',
+  'Denpasar',
+  'Balikpapan',
+  'Palembang',
+  'Pekanbaru',
+  'Bogor',
+];
+const regions = [
+  'Jabodetabek',
+  'Jawa Barat',
+  'Jawa Tengah',
+  'Jawa Timur',
+  'Sumatera Utara',
+  'Bali',
+  'Kalimantan Timur',
+  'Sulawesi Selatan',
+];
 
 function generateOutlets(count: number) {
   const outlets = [];
   for (let i = 1; i <= count; i++) {
     outlets.push({
       code: `OUT${String(i).padStart(3, '0')}`,
-      name: `${randomElement(['Metro', 'City', 'Central', 'Prime', 'Golden', 'Star', 'Royal', 'Elite'])} ${randomElement(['Mart', 'Store', 'Shop', 'Market', 'Outlet', 'Center'])} ${i}`,
-      address: `${randomInt(100, 9999)} ${randomElement(['Main', 'Oak', 'Pine', 'Maple', 'Cedar', 'Elm'])} ${randomElement(['St', 'Ave', 'Blvd', 'Rd'])}`,
+      name: `${randomElement(['Toko', 'Warung', 'Pasar', 'Grosir', 'Mini', 'Super'])} ${randomElement(['Indah', 'Sejahtera', 'Maju', 'Makmur', 'Jaya', 'Sentosa'])} ${i}`,
+      address: `Jl. ${randomElement(['Sudirman', 'Thamrin', 'Diponegoro', 'Pahlawan', 'Merdeka', 'Gatot Subroto'])} No. ${randomInt(1, 999)}`,
       city: randomElement(cities),
       region: randomElement(regions),
       outletType: randomElement(outletTypes),
@@ -84,14 +106,14 @@ function generateOutlets(count: number) {
   return outlets;
 }
 
-const productCategories = ['Beverages', 'Snacks', 'Dairy', 'Personal Care', 'Household', 'Frozen'];
+const productCategories = ['Minuman', 'Snack', 'Sembako', 'Perawatan Pribadi', 'Kebutuhan Rumah Tangga', 'Beku'];
 const productNames = {
-  Beverages: ['Cola', 'Juice', 'Water', 'Tea', 'Coffee', 'Energy Drink'],
-  Snacks: ['Chips', 'Crackers', 'Cookies', 'Nuts', 'Candy Bar'],
-  Dairy: ['Milk', 'Yogurt', 'Cheese', 'Butter', 'Cream'],
-  'Personal Care': ['Shampoo', 'Soap', 'Toothpaste', 'Lotion', 'Deodorant'],
-  Household: ['Detergent', 'Cleaner', 'Tissues', 'Paper Towels'],
-  Frozen: ['Ice Cream', 'Frozen Pizza', 'Frozen Vegetables', 'Frozen Meat'],
+  Minuman: ['Teh Botol', 'Air Mineral', 'Kopi Sachet', 'Jus', 'Susu UHT', 'Energi Drink'],
+  Snack: ['Keripik Singkong', 'Kerupuk', 'Biskuit', 'Kacang', 'Wafer'],
+  Sembako: ['Mi Instan', 'Gula Pasir', 'Minyak Goreng', 'Beras', 'Saus Sambal'],
+  'Perawatan Pribadi': ['Shampoo', 'Sabun', 'Pasta Gigi', 'Lotion', 'Deodoran'],
+  'Kebutuhan Rumah Tangga': ['Deterjen', 'Pembersih Lantai', 'Tisu', 'Kantong Sampah'],
+  Beku: ['Es Krim', 'Nugget', 'Sosis Beku', 'Sayur Beku'],
 };
 
 function generateProducts(count: number) {
@@ -101,10 +123,10 @@ function generateProducts(count: number) {
     const baseName = randomElement(productNames[category as keyof typeof productNames]);
     products.push({
       sku: `SKU${String(i).padStart(3, '0')}`,
-      name: `${randomElement(['Premium', 'Classic', 'Value', 'Organic', 'Natural'])} ${baseName} ${randomElement(['500ml', '1L', '250g', '500g', '100ct', ''])}`.trim(),
+      name: `${randomElement(['Premium', 'Klasik', 'Hemat', 'Organik', 'Alami'])} ${baseName} ${randomElement(['250ml', '500ml', '1L', '250g', '500g', ''])}`.trim(),
       category,
       unitPrice: randomFloat(1.5, 50, 2),
-      unit: randomElement(['pcs', 'pack', 'bottle', 'box', 'kg']),
+      unit: randomElement(['pcs', 'bungkus', 'botol', 'dus', 'kg']),
     });
   }
   return products;

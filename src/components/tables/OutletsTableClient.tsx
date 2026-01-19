@@ -1,5 +1,6 @@
 "use client";
 
+import { useMemo, useState } from 'react';
 import { DataTable, Column } from '@/components/DataTable';
 import { Badge } from '@/components/Badge';
 
@@ -26,6 +27,7 @@ const outletTypeLabels: Record<string, string> = {
 };
 
 export function OutletsTableClient({ data }: { data: OutletRow[] }) {
+  const [query, setQuery] = useState("");
   const columns: Column<OutletRow>[] = [
     { key: 'code', header: 'Code' },
     {
@@ -71,13 +73,41 @@ export function OutletsTableClient({ data }: { data: OutletRow[] }) {
     },
   ];
 
+  const filtered = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    if (!q) return data;
+    return data.filter((o) =>
+      [o.code, o.name, o.city || "", o.region || "", outletTypeLabels[o.outletType] || o.outletType]
+        .join(" ")
+        .toLowerCase()
+        .includes(q)
+    );
+  }, [data, query]);
+
   return (
-    <DataTable
-      columns={columns}
-      data={data}
-      keyExtractor={(item) => item.id}
-      emptyMessage="No outlets found"
-    />
+    <div>
+      <div className="flex items-center justify-between gap-2 mb-3 flex-wrap">
+        <div className="flex items-center gap-2">
+          <input
+            className="input"
+            placeholder="Cari kode/nama/kota/region/tipe..."
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+          />
+          {query && (
+            <button className="btn btn-secondary" onClick={() => setQuery("")}>Bersihkan</button>
+          )}
+        </div>
+        <div className="text-sm" style={{ color: 'var(--muted)' }}>
+          Menampilkan {filtered.length} dari {data.length}
+        </div>
+      </div>
+      <DataTable
+        columns={columns}
+        data={filtered}
+        keyExtractor={(item) => item.id}
+        emptyMessage="Tidak ada outlet"
+      />
+    </div>
   );
 }
-

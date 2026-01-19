@@ -123,9 +123,9 @@ export default function AntiFraudReportPage() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold text-gray-900">Anti-Fraud Report</h1>
-        <p className="text-gray-500">Analyze sales patterns and identify risk indicators</p>
+      <div className="rounded-xl guide-hero p-6 border" style={{ borderColor: 'var(--border)', backgroundColor: 'var(--surface)' }}>
+        <h1 className="text-2xl font-bold text-text">Anti-Fraud Report</h1>
+        <p className="text-sm mt-1" style={{ color: 'var(--muted)' }}>Analyze sales patterns and identify risk indicators</p>
       </div>
 
       {/* Filters */}

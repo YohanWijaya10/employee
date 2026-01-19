@@ -206,10 +206,10 @@ function LoadingCard() {
 export default function DashboardPage() {
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
+      <div className="flex justify-between items-center rounded-xl guide-hero p-6 border mb-4" style={{ borderColor: 'var(--border)', backgroundColor: 'var(--surface)' }}>
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
-          <p className="text-gray-500">Sales & Distribution Monitoring Overview</p>
+          <h1 className="text-2xl font-bold text-text">Dashboard</h1>
+          <p className="text-sm" style={{ color: 'var(--muted)' }}>Sales & Distribution Monitoring Overview</p>
         </div>
         <Link href="/reports/anti-fraud" className="btn btn-primary">
           Anti-Fraud Report

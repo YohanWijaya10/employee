@@ -1,5 +1,6 @@
 "use client";
 
+import { useMemo, useState } from 'react';
 import { DataTable, Column } from '@/components/DataTable';
 import { Badge } from '@/components/Badge';
 
@@ -17,6 +18,8 @@ export interface SalesRepRow {
 }
 
 export function SalesRepsTableClient({ data }: { data: SalesRepRow[] }) {
+  const [query, setQuery] = useState("");
+
   const columns: Column<SalesRepRow>[] = [
     { key: 'code', header: 'Code' },
     { key: 'name', header: 'Name' },
@@ -48,13 +51,41 @@ export function SalesRepsTableClient({ data }: { data: SalesRepRow[] }) {
     },
   ];
 
+  const filtered = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    if (!q) return data;
+    return data.filter((r) =>
+      [r.code, r.name, r.region || ""]
+        .join(" ")
+        .toLowerCase()
+        .includes(q)
+    );
+  }, [data, query]);
+
   return (
-    <DataTable
-      columns={columns}
-      data={data}
-      keyExtractor={(item) => item.id}
-      emptyMessage="No sales representatives found"
-    />
+    <div>
+      <div className="flex items-center justify-between gap-2 mb-3 flex-wrap">
+        <div className="flex items-center gap-2">
+          <input
+            className="input"
+            placeholder="Cari kode/nama/region..."
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+          />
+          {query && (
+            <button className="btn btn-secondary" onClick={() => setQuery("")}>Bersihkan</button>
+          )}
+        </div>
+        <div className="text-sm" style={{ color: 'var(--muted)' }}>
+          Menampilkan {filtered.length} dari {data.length}
+        </div>
+      </div>
+      <DataTable
+        columns={columns}
+        data={filtered}
+        keyExtractor={(item) => item.id}
+        emptyMessage="Tidak ada data sales rep"
+      />
+    </div>
   );
 }
-
