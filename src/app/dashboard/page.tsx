@@ -6,6 +6,7 @@ import { TopSalesRepsTableClient } from '@/components/tables/TopSalesRepsTableCl
 import { Badge } from '@/components/Badge';
 import { format, subDays } from 'date-fns';
 import Link from 'next/link';
+import { formatIDR } from '@/lib/format/currency';
 
 // Default date range: last 30 days
 function getDefaultDateRange() {
@@ -42,8 +43,8 @@ async function DashboardKPIs() {
       />
       <KPICard
         title="Total Revenue"
-        value={`$${metrics.totalRevenue.toLocaleString(undefined, { minimumFractionDigits: 2 })}`}
-        subtitle={`Avg: $${metrics.avgOrderValue.toLocaleString(undefined, { minimumFractionDigits: 2 })}`}
+        value={formatIDR(metrics.totalRevenue)}
+        subtitle={`Avg: ${formatIDR(metrics.avgOrderValue)}`}
       />
     </div>
   );

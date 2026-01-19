@@ -1,6 +1,7 @@
 import prisma from '@/lib/db/prisma';
 import { getSalesRepMetrics } from '@/lib/metrics/computations';
 import { SalesRepsTableClient } from '@/components/tables/SalesRepsTableClient';
+import { formatIDR } from '@/lib/format/currency';
 import { format, subDays } from 'date-fns';
 
 interface SalesRepWithStats {
@@ -82,7 +83,7 @@ export default async function SalesRepsPage() {
         </div>
         <div className="card">
           <p className="text-sm text-gray-500">Total Revenue (90d)</p>
-          <p className="text-2xl font-semibold">${totalRevenue.toLocaleString(undefined, { minimumFractionDigits: 0 })}</p>
+          <p className="text-2xl font-semibold">{formatIDR(totalRevenue)}</p>
         </div>
       </div>
 

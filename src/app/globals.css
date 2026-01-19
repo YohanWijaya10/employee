@@ -101,3 +101,14 @@ tbody tr:hover { background-color: color-mix(in oklab, var(--surface) 92%, var(-
 
 /* Guide header gradient */
 .guide-hero { background: linear-gradient(90deg, color-mix(in oklab, var(--primary) 10%, transparent), transparent 65%); }
+
+/* Chips (pills) */
+.chip { @apply inline-flex items-center gap-1 px-3 py-1 rounded-full text-sm border transition-colors; border-color: var(--border); background-color: var(--surface-2); color: var(--muted); }
+.chip:hover { background-color: color-mix(in oklab, var(--surface-2) 85%, var(--text)); color: var(--text); }
+.chip-active { background: color-mix(in oklab, var(--primary) 12%, transparent); color: var(--primary); border-color: color-mix(in oklab, var(--primary) 45%, var(--border)); }
+.chip-danger { background: color-mix(in oklab, var(--danger) 10%, transparent); color: var(--danger); border-color: color-mix(in oklab, var(--danger) 35%, var(--border)); }
+
+/* Input with icon */
+.input-icon { @apply relative; }
+.input-icon input { @apply pl-10; }
+.input-icon .icon { @apply absolute left-3 top-1/2 -translate-y-1/2 text-sm; color: var(--muted); }

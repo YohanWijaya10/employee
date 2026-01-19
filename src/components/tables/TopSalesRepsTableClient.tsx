@@ -2,6 +2,7 @@
 
 import { DataTable, Column } from '@/components/DataTable';
 import { Badge } from '@/components/Badge';
+import { formatIDR } from '@/lib/format/currency';
 
 export interface SalesRepRow {
   salesRepId: string;
@@ -31,7 +32,7 @@ export function TopSalesRepsTableClient({ data }: { data: SalesRepRow[] }) {
     {
       key: 'totalRevenue',
       header: 'Revenue',
-      render: (item) => `$${item.totalRevenue.toLocaleString(undefined, { minimumFractionDigits: 2 })}`,
+      render: (item) => formatIDR(item.totalRevenue),
     },
   ];
 
@@ -44,4 +45,3 @@ export function TopSalesRepsTableClient({ data }: { data: SalesRepRow[] }) {
     />
   );
 }
-

@@ -36,6 +36,31 @@ function randomFloat(min: number, max: number, decimals: number = 2): number {
   return parseFloat((Math.random() * (max - min) + min).toFixed(decimals));
 }
 
+function randomIntStep(min: number, max: number, step: number = 1): number {
+  const n = Math.floor((max - min) / step);
+  return min + step * Math.floor(Math.random() * (n + 1));
+}
+
+// Generate realistic IDR unit prices by category (in Rupiah)
+function randomPriceIDR(category: string): number {
+  switch (category) {
+    case 'Minuman':
+      return randomIntStep(3000, 20000, 500); // Teh botol, air mineral, kopi sachet
+    case 'Snack':
+      return randomIntStep(2000, 25000, 500); // Keripik, biskuit
+    case 'Sembako':
+      return randomIntStep(5000, 150000, 1000); // Beras, minyak goreng, gula
+    case 'Perawatan Pribadi':
+      return randomIntStep(5000, 80000, 1000); // Shampoo, sabun, pasta gigi
+    case 'Kebutuhan Rumah Tangga':
+      return randomIntStep(5000, 100000, 1000); // Deterjen, pembersih lantai
+    case 'Beku':
+      return randomIntStep(10000, 120000, 1000); // Es krim, nugget, sosis beku
+    default:
+      return randomIntStep(5000, 50000, 500);
+  }
+}
+
 function randomElement<T>(arr: T[]): T {
   return arr[Math.floor(Math.random() * arr.length)];
 }
@@ -125,7 +150,7 @@ function generateProducts(count: number) {
       sku: `SKU${String(i).padStart(3, '0')}`,
       name: `${randomElement(['Premium', 'Klasik', 'Hemat', 'Organik', 'Alami'])} ${baseName} ${randomElement(['250ml', '500ml', '1L', '250g', '500g', ''])}`.trim(),
       category,
-      unitPrice: randomFloat(1.5, 50, 2),
+      unitPrice: randomPriceIDR(category),
       unit: randomElement(['pcs', 'bungkus', 'botol', 'dus', 'kg']),
     });
   }

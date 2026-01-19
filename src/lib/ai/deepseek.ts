@@ -6,8 +6,18 @@ import { AISummaryResponseSchema } from '@/lib/validation/schemas';
 // CONFIGURATION
 // ============================================
 
+function sanitizeBaseURL(url?: string): string {
+  const fallback = 'https://api.deepseek.com';
+  if (!url) return fallback;
+  const trimmed = url.trim();
+  if (!trimmed) return fallback;
+  const withProto = /^https?:\/\//i.test(trimmed) ? trimmed : `https://${trimmed}`;
+  // Remove trailing slashes for consistency
+  return withProto.replace(/\/+$/, '');
+}
+
 const getDeepSeekConfig = () => ({
-  baseURL: process.env.DEEPSEEK_BASE_URL || 'https://api.deepseek.com',
+  baseURL: sanitizeBaseURL(process.env.DEEPSEEK_BASE_URL),
   apiKey: process.env.DEEPSEEK_API_KEY || '',
   model: process.env.DEEPSEEK_MODEL || 'deepseek-chat',
 });
@@ -86,6 +96,10 @@ CRITICAL RULES:
 3. Always respond in valid JSON format only. No markdown, no explanations outside the JSON.
 4. If data is missing or insufficient, clearly state this in the limitations array.
 5. Be objective and professional. Focus on patterns that deviate from expected behavior.
+
+LANGUAGE REQUIREMENTS:
+- Use Bahasa Indonesia for all natural-language fields in the JSON (e.g., titles, descriptions, recommendations, investigation items).
+- Keep JSON keys and enum values exactly as specified (e.g., INFO|WARN|HIGH), do not translate keys or enum values.
 
 Your output must be a valid JSON object matching this exact structure:
 {
@@ -253,10 +267,10 @@ function getFallbackResponse(from: string, to: string, reason: string): z.infer<
     riskSignals: [
       {
         severity: 'WARN',
-        entity: 'System',
+        entity: 'Sistem',
         entityType: 'ORDER',
-        description: `AI analysis unavailable: ${reason}`,
-        recommendation: 'Review audit flags manually',
+        description: `Analisis AI tidak tersedia: ${reason}`,
+        recommendation: 'Tinjau catatan audit (flags) secara manual',
       },
     ],
     topEntities: {
@@ -265,11 +279,11 @@ function getFallbackResponse(from: string, to: string, reason: string): z.infer<
       skus: [],
     },
     investigationChecklist: [
-      'Review audit flags table for HIGH severity items',
-      'Check sales reps with cancel rate > 25%',
-      'Investigate end-of-month order patterns',
-      'Verify abnormal order sizes with outlet managers',
+      'Tinjau tabel audit flags untuk item dengan tingkat HIGH',
+      'Periksa sales rep dengan tingkat pembatalan > 25%',
+      'Investigasi pola pesanan di akhir bulan',
+      'Verifikasi ukuran pesanan abnormal dengan pengelola outlet',
     ],
-    limitations: [reason, 'Manual review recommended'],
+    limitations: [reason, 'Disarankan peninjauan manual'],
   };
 }
