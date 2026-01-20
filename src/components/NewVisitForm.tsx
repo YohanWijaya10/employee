@@ -2,6 +2,7 @@
 /* eslint-disable @next/next/no-img-element */
 
 import { useState, useRef, useEffect } from 'react';
+import CameraCapture from '@/components/CameraCapture';
 import Link from 'next/link';
 
 interface SalesRep {
@@ -64,6 +65,15 @@ export function NewVisitForm({ salesReps, outlets }: NewVisitFormProps) {
   const [uploading, setUploading] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
   const [uploadedPhotoUrl, setUploadedPhotoUrl] = useState<string | null>(null);
+  const [showCamera, setShowCamera] = useState(false);
+  const objectUrlRef = useRef<string | null>(null);
+
+  // Cleanup object URL when component unmounts or file changes
+  useEffect(() => {
+    return () => {
+      if (objectUrlRef.current) URL.revokeObjectURL(objectUrlRef.current);
+    };
+  }, []);
 
   const selectedOutlet = outlets.find((o) => o.id === outletId);
   const selectedSalesRep = salesReps.find((s) => s.id === salesRepId);
@@ -167,12 +177,22 @@ export function NewVisitForm({ salesReps, outlets }: NewVisitFormProps) {
     setSelectedFile(file);
     setUploadError(null);
 
-    // Create preview
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      setPreviewUrl(event.target?.result as string);
-    };
-    reader.readAsDataURL(file);
+    // Create preview via object URL
+    if (objectUrlRef.current) URL.revokeObjectURL(objectUrlRef.current);
+    const url = URL.createObjectURL(file);
+    objectUrlRef.current = url;
+    setPreviewUrl(url);
+  };
+
+  // Handle camera capture -> create a File and preview
+  const handleCameraCapture = (blob: Blob) => {
+    const file = new File([blob], 'camera.jpg', { type: 'image/jpeg' });
+    setSelectedFile(file);
+    if (objectUrlRef.current) URL.revokeObjectURL(objectUrlRef.current);
+    const url = URL.createObjectURL(file);
+    objectUrlRef.current = url;
+    setPreviewUrl(url);
+    setShowCamera(false);
   };
 
   // Apply watermark when file is selected
@@ -461,7 +481,9 @@ export function NewVisitForm({ salesReps, outlets }: NewVisitFormProps) {
             <input
               type="file"
               ref={fileInputRef}
-              accept="image/jpeg,image/png"
+              accept="image/*"
+              // On many mobile browsers, this hints to open the camera
+              capture="environment"
               onChange={handleFileSelect}
               className="hidden"
             />
@@ -472,6 +494,14 @@ export function NewVisitForm({ salesReps, outlets }: NewVisitFormProps) {
               className="btn btn-secondary"
             >
               {selectedFile ? 'Change Photo' : 'Select Photo'}
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setShowCamera(true)}
+              className="btn"
+            >
+              Open Camera
             </button>
 
             {/* Hidden canvas for watermarking */}
@@ -504,6 +534,13 @@ export function NewVisitForm({ salesReps, outlets }: NewVisitFormProps) {
           </div>
         </div>
       )}
+
+      {/* Camera modal */}
+      <CameraCapture
+        isOpen={showCamera}
+        onClose={() => setShowCamera(false)}
+        onCapture={handleCameraCapture}
+      />
 
       {/* Cancel link */}
       <div className="flex justify-end">
