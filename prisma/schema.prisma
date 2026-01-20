@@ -29,6 +29,7 @@ model SalesRep {
   // Relations
   orders              Order[]
   cancelledOrders     CancellationLog[] @relation("CancelledBy")
+  visitLogs           VisitLog[]
 
   @@index([code])
   @@index([region])
@@ -42,13 +43,16 @@ model Outlet {
   address     String?
   city        String?
   region      String?
+  latitude    Float?
+  longitude   Float?
   outletType  OutletType @default(RETAIL)
   isActive    Boolean  @default(true)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
   // Relations
-  orders Order[]
+  orders    Order[]
+  visitLogs VisitLog[]
 
   @@index([code])
   @@index([region])
@@ -194,7 +198,7 @@ model AuditFlag {
   id          String        @id @default(cuid())
   entityType  EntityType
   entityId    String
-  ruleCode    String        // e.g., "HIGH_CANCEL_RATE", "END_OF_MONTH_SPIKE"
+  ruleCode    String        // e.g., "HIGH_CANCEL_RATE", "END_OF_MONTH_SPIKE", "DUPLICATE_PHOTO"
   severity    FlagSeverity
   message     String
   meta        Json?         // Additional context data
@@ -207,12 +211,17 @@ model AuditFlag {
   orderId     String?
   order       Order?        @relation(fields: [orderId], references: [id], onDelete: SetNull)
 
+  // Optional direct relation to visit
+  visitLogId  String?
+  visitLog    VisitLog?     @relation("VisitAuditFlags", fields: [visitLogId], references: [id], onDelete: SetNull)
+
   @@index([entityType, entityId])
   @@index([ruleCode])
   @@index([severity])
   @@index([createdAt])
   @@index([isResolved])
   @@index([entityType, createdAt])
+  @@index([visitLogId])
 }
 
 enum EntityType {
@@ -220,10 +229,62 @@ enum EntityType {
   OUTLET
   ORDER
   PRODUCT
+  VISIT
 }
 
 enum FlagSeverity {
   INFO
   WARN
   HIGH
+}
+
+// ============================================
+// VISIT LOGGING (GEO CHECK-IN + PHOTO PROOF)
+// ============================================
+
+model VisitLog {
+  id              String       @id @default(cuid())
+
+  // Check-in location data
+  latitude        Float
+  longitude       Float
+  accuracy        Float?       // GPS accuracy in meters
+  distance        Float        // Distance from outlet in meters
+  status          VisitStatus  @default(PENDING)
+
+  // Photo proof (Supabase Storage)
+  photoPath       String?      // Supabase Storage object path (source of truth)
+  photoSha256     String?      // SHA-256 hash for duplicate detection
+
+  // Timestamps
+  checkInTime     DateTime     @default(now())
+  serverTime      DateTime     @default(now())
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+
+  // Notes
+  notes           String?
+
+  // Relations
+  salesRepId      String
+  salesRep        SalesRep     @relation(fields: [salesRepId], references: [id])
+
+  outletId        String
+  outlet          Outlet       @relation(fields: [outletId], references: [id])
+
+  auditFlags      AuditFlag[]  @relation("VisitAuditFlags")
+
+  @@index([salesRepId])
+  @@index([outletId])
+  @@index([checkInTime])
+  @@index([status])
+  @@index([photoSha256])
+  @@index([salesRepId, checkInTime])
+}
+
+enum VisitStatus {
+  PENDING      // Check-in created, no photo yet
+  VERIFIED     // Photo uploaded and within acceptable distance
+  FLAGGED      // Photo uploaded but distance too far or other issues
+  REJECTED     // Manually rejected by admin
 }

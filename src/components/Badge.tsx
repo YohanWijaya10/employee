@@ -66,3 +66,30 @@ export function SeverityBadge({ severity }: SeverityBadgeProps) {
     </Badge>
   );
 }
+
+// Visit Status Badge
+interface VisitStatusBadgeProps {
+  status: 'PENDING' | 'VERIFIED' | 'FLAGGED' | 'REJECTED';
+}
+
+const visitStatusVariants: Record<string, 'info' | 'warn' | 'success' | 'high' | 'default'> = {
+  PENDING: 'default',
+  VERIFIED: 'success',
+  FLAGGED: 'warn',
+  REJECTED: 'high',
+};
+
+const visitStatusLabels: Record<string, string> = {
+  PENDING: 'Pending',
+  VERIFIED: 'Verified',
+  FLAGGED: 'Flagged',
+  REJECTED: 'Rejected',
+};
+
+export function VisitStatusBadge({ status }: VisitStatusBadgeProps) {
+  return (
+    <Badge variant={visitStatusVariants[status] || 'default'}>
+      {visitStatusLabels[status] || status}
+    </Badge>
+  );
+}

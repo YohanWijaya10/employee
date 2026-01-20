@@ -2,6 +2,7 @@ import { NextRequest } from 'next/server';
 import { protectRoute, successResponse, errorResponse, serverErrorResponse } from '@/lib/auth/middleware';
 import { CreateSalesRepSchema, PaginationSchema } from '@/lib/validation/schemas';
 import prisma from '@/lib/db/prisma';
+import { Prisma } from '@prisma/client';
 
 /**
  * GET /api/sales-reps
@@ -17,7 +18,7 @@ export async function GET(request: NextRequest) {
     const region = searchParams.get('region');
     const isActive = searchParams.get('isActive');
 
-    const where: Parameters<typeof prisma.salesRep.findMany>[0]['where'] = {};
+    const where: Prisma.SalesRepWhereInput = {};
 
     if (region) {
       where.region = region;

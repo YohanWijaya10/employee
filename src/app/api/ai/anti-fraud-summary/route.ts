@@ -36,12 +36,13 @@ export async function POST(request: NextRequest) {
       flags = ruleResult.flags.map((f) => ({
         ...f,
         id: 'generated',
-        isResolved: false,
+        isResolved: false as const,
         resolvedAt: null,
         resolvedBy: null,
         createdAt: new Date(),
         orderId: f.orderId || null,
-        meta: f.meta || {},
+        visitLogId: null,
+        meta: (f.meta || {}) as object,
       }));
     }
 

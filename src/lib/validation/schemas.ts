@@ -75,7 +75,7 @@ export const MetricsQuerySchema = z.object({
 export const FlagsQuerySchema = z.object({
   from: z.string().optional(),
   to: z.string().optional(),
-  entityType: z.enum(['SALES_REP', 'OUTLET', 'ORDER', 'PRODUCT']).optional(),
+  entityType: z.enum(['SALES_REP', 'OUTLET', 'ORDER', 'PRODUCT', 'VISIT']).optional(),
   severity: z.enum(['INFO', 'WARN', 'HIGH']).optional(),
   ruleCode: z.string().optional(),
   isResolved: z.coerce.boolean().optional(),
@@ -183,6 +183,32 @@ export const CreateProductSchema = z.object({
 });
 
 // ============================================
+// Visit Schemas (Geo Check-In + Photo Proof)
+// ============================================
+
+export const VisitStatusSchema = z.enum(['PENDING', 'VERIFIED', 'FLAGGED', 'REJECTED']);
+
+export const CreateVisitCheckInSchema = z.object({
+  salesRepId: z.string().cuid(),
+  outletId: z.string().cuid(),
+  latitude: z.number().min(-90).max(90),
+  longitude: z.number().min(-180).max(180),
+  accuracy: z.number().positive().optional(),
+  checkInTime: z.string().datetime().optional(), // If not provided, server uses current time
+  notes: z.string().optional(),
+});
+
+export const VisitsQuerySchema = z.object({
+  from: z.string().optional(),
+  to: z.string().optional(),
+  salesRepId: z.string().cuid().optional(),
+  outletId: z.string().cuid().optional(),
+  status: VisitStatusSchema.optional(),
+  page: z.coerce.number().int().min(1).default(1),
+  limit: z.coerce.number().int().min(1).max(100).default(20),
+});
+
+// ============================================
 // Export Types
 // ============================================
 
@@ -194,3 +220,5 @@ export type AISummaryResponse = z.infer<typeof AISummaryResponseSchema>;
 export type CreateOrder = z.infer<typeof CreateOrderSchema>;
 export type UpdateOrderStatus = z.infer<typeof UpdateOrderStatusSchema>;
 export type CancelOrder = z.infer<typeof CancelOrderSchema>;
+export type CreateVisitCheckIn = z.infer<typeof CreateVisitCheckInSchema>;
+export type VisitsQuery = z.infer<typeof VisitsQuerySchema>;

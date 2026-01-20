@@ -267,7 +267,7 @@ function getFallbackResponse(from: string, to: string, reason: string): z.infer<
     riskSignals: [
       {
         severity: 'WARN',
-        entity: 'Sistem',
+        entity: 'System',
         entityType: 'ORDER',
         description: `Analisis AI tidak tersedia: ${reason}`,
         recommendation: 'Tinjau catatan audit (flags) secara manual',

@@ -1,5 +1,5 @@
 import prisma from '@/lib/db/prisma';
-import { OrderStatus } from '@prisma/client';
+import { OrderStatus, Prisma } from '@prisma/client';
 import { startOfMonth, endOfMonth, subDays, parseISO, isWithinInterval, format } from 'date-fns';
 
 // ============================================
@@ -110,7 +110,7 @@ export async function getOrderMetrics(
 ): Promise<OrderMetrics> {
   const dateRange = parseDateRange(from, to);
 
-  const whereClause: Parameters<typeof prisma.order.findMany>[0]['where'] = {
+  const whereClause: Prisma.OrderWhereInput = {
     createdAt: {
       gte: dateRange.from,
       lte: dateRange.to,
@@ -213,7 +213,7 @@ export async function getOutletMetrics(
 ): Promise<OutletMetrics[]> {
   const dateRange = parseDateRange(from, to);
 
-  const whereClause: Parameters<typeof prisma.outlet.findMany>[0]['where'] = {
+  const whereClause: Prisma.OutletWhereInput = {
     isActive: true,
   };
 

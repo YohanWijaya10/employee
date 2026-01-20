@@ -1,5 +1,5 @@
 import prisma from '@/lib/db/prisma';
-import { EntityType, FlagSeverity } from '@prisma/client';
+import { EntityType, FlagSeverity, Prisma } from '@prisma/client';
 import {
   getOrderMetrics,
   getSalesRepMetrics,
@@ -376,7 +376,7 @@ export async function saveAuditFlags(flags: AuditFlagInput[]): Promise<number> {
         ruleCode: flag.ruleCode,
         severity: flag.severity,
         message: flag.message,
-        meta: flag.meta || {},
+        meta: (flag.meta || {}) as object,
         orderId: flag.orderId,
       })),
     });
@@ -400,7 +400,7 @@ export async function getExistingFlags(
     isResolved?: boolean;
   }
 ) {
-  const whereClause: Parameters<typeof prisma.auditFlag.findMany>[0]['where'] = {};
+  const whereClause: Prisma.AuditFlagWhereInput = {};
 
   if (from && to) {
     whereClause.createdAt = {

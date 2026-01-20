@@ -2,6 +2,7 @@ import { NextRequest } from 'next/server';
 import { protectRoute, successResponse, errorResponse, serverErrorResponse } from '@/lib/auth/middleware';
 import { CreateOutletSchema, PaginationSchema } from '@/lib/validation/schemas';
 import prisma from '@/lib/db/prisma';
+import { Prisma } from '@prisma/client';
 
 /**
  * GET /api/outlets
@@ -24,7 +25,7 @@ export async function GET(request: NextRequest) {
       limit: searchParams.get('limit') || 50,
     });
 
-    const where: Parameters<typeof prisma.outlet.findMany>[0]['where'] = {};
+    const where: Prisma.OutletWhereInput = {};
 
     if (region) {
       where.region = region;

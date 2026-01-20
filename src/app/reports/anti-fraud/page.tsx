@@ -12,8 +12,8 @@ interface Flag {
   ruleCode: string;
   severity: 'INFO' | 'WARN' | 'HIGH';
   message: string;
-  createdAt: string;
-  meta: Record<string, unknown>;
+  createdAt: Date | string;
+  meta: unknown;
 }
 
 interface AISummary {
@@ -303,7 +303,7 @@ export default function AntiFraudReportPage() {
           <div className="text-center py-8 text-gray-500">Loading flags...</div>
         ) : flags.length === 0 ? (
           <div className="text-center py-8 text-gray-500">
-            No flags found for this period. Click "Run Fraud Detection" to analyze.
+            No flags found for this period. Click &quot;Run Fraud Detection&quot; to analyze.
           </div>
         ) : (
           <div className="overflow-x-auto">

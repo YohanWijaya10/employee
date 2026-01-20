@@ -19,7 +19,7 @@ export default function GuidePage() {
           <h3 className="font-semibold mb-2">Dashboard</h3>
           <ul className="list-disc list-inside text-text space-y-1 marker:text-muted">
             <li>Total Orders, Delivered, Cancelled, Total Revenue (30 hari default).</li>
-            <li>"Sales Reps by Cancel Rate" menyorot rep dengan cancel rate tinggi.</li>
+            <li>&quot;Sales Reps by Cancel Rate&quot; menyorot rep dengan cancel rate tinggi.</li>
             <li>Order Status Distribution menunjukkan proporsi status order.</li>
             <li>Recent Audit Flags menampilkan flag terbaru dari deteksi risiko.</li>
           </ul>
@@ -52,8 +52,8 @@ export default function GuidePage() {
       <div className="card">
         <h2 className="text-lg font-semibold mb-2">Anti‑Fraud Report</h2>
         <ul className="list-disc list-inside text-text space-y-1 marker:text-muted">
-          <li>Set periode tanggal lalu klik "Run Fraud Detection" untuk membuat flag.</li>
-          <li>Klik "Generate AI Summary" untuk ringkasan AI yang merangkum metrik, pola risiko, dan checklist investigasi.</li>
+          <li>Set periode tanggal lalu klik &quot;Run Fraud Detection&quot; untuk membuat flag.</li>
+          <li>Klik &quot;Generate AI Summary&quot; untuk ringkasan AI yang merangkum metrik, pola risiko, dan checklist investigasi.</li>
           <li>Flag Severity: INFO (biru), WARN (kuning), HIGH (merah).</li>
           <li>Contoh pola: cancel rate tinggi (&gt;15% WARN, &gt;25% HIGH), spike akhir bulan, pre-ship cancellations, ukuran order abnormal.</li>
         </ul>
@@ -64,7 +64,7 @@ export default function GuidePage() {
         <ul className="list-disc list-inside text-text space-y-1 marker:text-muted">
           <li>Klik baris/tautan biru untuk membuka detail (mis. nomor order).</li>
           <li>Nilai uang diformat otomatis; badge warna membantu prioritas.</li>
-          <li>Kursi kosong "-" berarti data belum tersedia/irrelevan.</li>
+          <li>Kursi kosong &quot;-&quot; berarti data belum tersedia/irrelevan.</li>
         </ul>
       </div>
 
@@ -83,7 +83,7 @@ export default function GuidePage() {
         <ol className="list-decimal list-inside text-text space-y-1 marker:text-muted">
           <li>Buka Dashboard untuk gambaran umum.</li>
           <li>Cek Sales Reps dan Outlets untuk cancel rate tinggi.</li>
-          <li>Buka Anti‑Fraud Report → jalankan "Run Fraud Detection".</li>
+          <li>Buka Anti‑Fraud Report → jalankan &quot;Run Fraud Detection&quot;.</li>
           <li>Generate AI Summary untuk ringkasannya dan checklist investigasi.</li>
           <li>Telusuri Orders untuk verifikasi detail transaksi.</li>
         </ol>

@@ -2,6 +2,7 @@ import { NextRequest } from 'next/server';
 import { protectRoute, successResponse, errorResponse, serverErrorResponse } from '@/lib/auth/middleware';
 import { CreateOrderSchema, PaginationSchema } from '@/lib/validation/schemas';
 import prisma from '@/lib/db/prisma';
+import { Prisma } from '@prisma/client';
 
 /**
  * GET /api/orders
@@ -27,7 +28,7 @@ export async function GET(request: NextRequest) {
     const from = searchParams.get('from');
     const to = searchParams.get('to');
 
-    const where: Parameters<typeof prisma.order.findMany>[0]['where'] = {};
+    const where: Prisma.OrderWhereInput = {};
 
     if (status) {
       where.status = status as 'CREATED' | 'READY_TO_SHIP' | 'DELIVERED' | 'CANCELLED';
